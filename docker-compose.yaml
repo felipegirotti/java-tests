@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+
+  mysql:
+    container_name: drz-mysql
+    image: mysql:5.7
+    restart: always
+    volumes:
+    - ./docker/mysql/data:/var/lib/mysql:cached
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: repos
+    ports:
+    - "3306:3306"
