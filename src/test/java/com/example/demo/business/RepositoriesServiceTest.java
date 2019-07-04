@@ -62,96 +62,35 @@ public class RepositoriesServiceTest {
 
     @Test
     public void getRepositoriesShoudResultEmptyList() {
-        when(gitHubApiService.getRepositories("facebook"))
-                .thenReturn(new ArrayList<>());
-        when(repositoryMapper.mapper(Mockito.any()))
-                .thenReturn(new ArrayList<>());
+        // mockar gitHubApiService para array vazio
+        // mockar repositoryMapper para array vazio
 
-        List<RepositoryDTOResponse> response = repositoriesService.getRepositories("facebook");
-
-        assertEquals(0, response.size());
     }
 
     @Test
     public void saveFavoriteShouldSaveNewRepository() {
-        when(repositoryRepository.findByRepository("facebook/.github"))
-                .thenReturn(null);
+        // mockar repository para retornar null
+        // ArgumentCaptor<Repository> argumentCaptor = ArgumentCaptor.forClass(Repository.class);
+        // verify(repositoryRepository).save(argumentCaptor.capture());
 
-        Boolean response = repositoriesService.saveFavorite("facebook/.github");
-
-        ArgumentCaptor<Repository> argumentCaptor = ArgumentCaptor.forClass(Repository.class);
-        verify(repositoryRepository).save(argumentCaptor.capture());
-
-        assertEquals(Integer.valueOf(1), argumentCaptor.getValue().getCounting());
-        assertEquals("facebook/.github", argumentCaptor.getValue().getRepository());
-        assertTrue(response);
     }
 
     @Test
     public void saveFavoriteShouldSaveIncrementCountingRepository() {
-        when(repositoryRepository.findByRepository("facebook/.github"))
-                .thenReturn(new Repository(1l, "facebook/.github", 1, LocalDateTime.now(), LocalDateTime.now()));
+        // mockar repository para retornar uma entity
 
-        Boolean response = repositoriesService.saveFavorite("facebook/.github");
-
-        ArgumentCaptor<Repository> argumentCaptor = ArgumentCaptor.forClass(Repository.class);
-        verify(repositoryRepository).save(argumentCaptor.capture());
-
-        assertEquals(Integer.valueOf(2), argumentCaptor.getValue().getCounting());
-        assertEquals("facebook/.github", argumentCaptor.getValue().getRepository());
-        assertTrue(response);
     }
 
     @Test
     public void saveFavoriteRiseExceptionNotSave() {
-        when(repositoryRepository.findByRepository("facebook/.github"))
-                .thenReturn(new Repository(1l, "facebook/.github", 1, LocalDateTime.now(), LocalDateTime.now()));
-        when(repositoryRepository.save(Mockito.any()))
-                .thenThrow(new RuntimeException("error"));
-
-        Boolean response = repositoriesService.saveFavorite("facebook/.github");
-
-        assertFalse(response);
+        // mockar repository findByRepository
+        // mockar repository thenThrow(new RuntimeException())
     }
 
-    @Test
-    public void unFavoriteShouldDecrementRepository() throws NotFound {
-        when(repositoryRepository.findByRepository("facebook/.github"))
-                .thenReturn(new Repository(1l, "facebook/.github", 10, LocalDateTime.now(), LocalDateTime.now()));
-
-        boolean response = repositoriesService.unFavorite("facebook/.github");
-
-        ArgumentCaptor<Repository> argumentCaptor = ArgumentCaptor.forClass(Repository.class);
-        verify(repositoryRepository).save(argumentCaptor.capture());
-
-        assertEquals(Integer.valueOf(9), argumentCaptor.getValue().getCounting());
-        assertTrue(response);
-    }
-
-    @Test
-    public void unFavoriteShouldDecrementWithNonZeroCountingRepository() throws NotFound {
-        when(repositoryRepository.findByRepository("facebook/.github"))
-                .thenReturn(new Repository(1l, "facebook/.github", 0, LocalDateTime.now(), LocalDateTime.now()));
-
-        boolean response = repositoriesService.unFavorite("facebook/.github");
-
-        ArgumentCaptor<Repository> argumentCaptor = ArgumentCaptor.forClass(Repository.class);
-        verify(repositoryRepository).save(argumentCaptor.capture());
-
-        assertEquals(Integer.valueOf(0), argumentCaptor.getValue().getCounting());
-        assertTrue(response);
-    }
-
-    @Test
-    public void unFavoriteShouldDecrementRiseNotFoundException()  {
-        when(repositoryRepository.findByRepository("facebook/.github"))
-                .thenReturn(null);
-
-        try {
-            repositoriesService.unFavorite("facebook/.github");
-            fail();
-        } catch (NotFound e) {
-            assertEquals("Not found repository [facebook/.github]", e.getMessage());
-        }
-    }
+    // Criar nova feature unfavorite
+    // TDD
+    // Testes:
+    // unFavoriteShouldDecrementRepository
+    // unFavoriteShouldDecrementWithNonZeroCountingRepository
+    // unFavoriteShouldDecrementRiseNotFoundException
 }

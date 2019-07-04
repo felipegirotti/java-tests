@@ -60,25 +60,4 @@ public class RepositoriesService {
 
         return true;
     }
-
-    @Transactional
-    public boolean unFavorite(String repositoryName) throws NotFound {
-        try {
-            Repository repository = repositoryRepository.findByRepository(repositoryName);
-            if (repository == null) {
-                throw new NotFound("Not found repository ["+ repositoryName +"]");
-            }
-
-            repository.setCounting(repository.getCounting().equals(0) ? 0 : repository.getCounting() - 1);
-            repositoryRepository.save(repository);
-        } catch (NotFound e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error on unfavorite repository: ["+ repositoryName +"]", e);
-
-            return false;
-        }
-
-        return true;
-    }
 }

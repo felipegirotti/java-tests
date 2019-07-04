@@ -7,11 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,7 +28,6 @@ public class ReposControllerTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(9999);
-
 
     @Test
     public void test01getRepositoriesShouldDisplayOneRepo() throws Exception {
@@ -54,49 +50,31 @@ public class ReposControllerTest {
 
     @Test
     public void test02saveFavoriteShouldSave() throws Exception {
-        mockMvc.perform(post("/api/v1/repos")
-                .content("{\"repositoryName\":\"facebook/.github\"}")
-                .contentType("application/json"))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+        // perform post
+            // content json
+            // contentType
+        // andDo
+        // andExpect status isNoContent
     }
 
     @Test
     public void test03getRepositoriesShouldDisplayOneRepoWithCounting() throws Exception {
 
-        WireMock.stubFor(WireMock.get("/users/facebook/repos")
-                .willReturn(
-                        WireMock.aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody(buildGitHubResponse())
-                )
-        );
+        // é importante ter o nome em ordenação neste caso, porque depende do teste anterior
+        // Wiremock get "/users/facebook/repos" mockar com wiremock o retorno do github buildGitHubResponse
+        // perform get /api/v1/repos/facebook
+        // esperar o json com counting "[{\"name\":\".github\",\"fullName\":\"facebook/.github\",\"counting\":1}]"
 
-        mockMvc.perform(get("/api/v1/repos/facebook"))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(MockMvcResultMatchers.content().json("[{\"name\":\".github\",\"fullName\":\"facebook/.github\",\"counting\":1}]"));
     }
 
     @Test
     public void test04getRepositoriesShouldZeroRepos() throws Exception {
 
-        WireMock.stubFor(WireMock.get("/users/facebook/repos")
-                .willReturn(
-                        WireMock.aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody("[]")
-                )
-        );
+        // teste para ver se o mapping está se comportando ok mesmo com resultados vazios
+        // wiremock devolve "[]"
+        // perform get "/api/v1/repos/facebook"
+        // andExpect(MockMvcResultMatchers.content().json("[]"))
 
-        mockMvc.perform(get("/api/v1/repos/facebook"))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(MockMvcResultMatchers.content().json("[]"));
     }
 
     private String buildGitHubResponse() {
