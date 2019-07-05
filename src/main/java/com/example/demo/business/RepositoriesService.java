@@ -6,6 +6,7 @@ import com.example.demo.persistence.entity.Repository;
 import com.example.demo.persistence.repository.RepositoryRepository;
 import com.example.demo.service.GitHubApiService;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,20 @@ public class RepositoriesService {
             log.error("Error on save repository ["+ repositoryName +"]", e);
             return false;
         }
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean unFavorite(String repositoryName) throws NotFound {
+
+        Repository repository = repositoryRepository.findByRepository(repositoryName);
+        if (repository == null) {
+            throw new NotFound("not found repository");
+        }
+        repository.setCounting(repository.getCounting().equals(0) ? 0 : repository.getCounting()- 1);
+        repositoryRepository.save(repository);
+
 
         return true;
     }
